@@ -1,0 +1,145 @@
+\documentclass{article}
+\usepackage{fontspec}
+\usepackage{leadsheets}
+
+\setmainfont{0xProtoNerdFontMono-Regular.ttf}[
+    Path=fonts/,
+    BoldFont=0xProtoNerdFontMono-Bold.ttf,
+    ItalicFont=0xProtoNerdFontMono-Italic.ttf
+]
+
+\defineversetypetemplate{custom}
+{%
+    \setleadsheets{verse/named, chords/format={\bfseries}}
+    \ifversestarred{}{%
+        \noindent\textbf\verselabel\newline\newline
+    }
+}
+{\newline}
+
+\setleadsheets{verse/template=custom, chorus/template=custom, verse/named}
+
+\begin{document}
+
+\begin{song}[remember-chords]{
+    title={Dance Me To The End Of Love},
+    music={Lonard Cohen}}
+
+    \begin{verse}
+        ^{Am}Dance me to your beauty with a ^{Em}burning violin \\
+        ^{Am}Dance me through the panic 'til I'm ^{Em}gathered safely in \\
+        ^{Am}Lift me like an olive branch and ^{Em}be my homeward dove \\
+        ^{B7}Dance me to the end of ^{Em}love \\
+        ^{B7}Dance me to the end of ^{Em}love
+    \end{verse}
+
+    \begin{verse}
+        ^Oh let me see your beauty when the ^witnesses are gone \\
+        ^Let me feel you moving like they ^do in Babylon \\
+        ^Show me slowly what I only ^know the limits of \\
+        ^Dance me to the end of ^love \\
+        ^Dance me to the end of ^love 
+    \end{verse}
+
+    \begin{verse}
+        ^Dance me to the wedding now, ^dance me on and on \\
+        ^Dance me very tenderly and ^dance me very long \\
+        ^We're both of us beneath our love, we're ^both of us above \\
+        ^Dance me to the end of ^love \\
+        ^Dance me to the end of ^love 
+    \end{verse}
+\end{song}
+
+\begin{song}[remember-chords]{
+    title={Five Thousand Nights},
+    music={}
+}
+
+    \begin{verse}
+        ^{Am}I do believe there's a ^{C/G}chance \\
+        That's not a ^{Em}chance, not a ^{Am}chance \\
+        ^{Am}You care to spare me a ^{C/G}dance \\
+        Not a ^{Em}chance, not a ^{Am}chance \\
+        ^{Am}This waltz will not be the ^{C/G}last \\
+        Not a ^{Em}chance, not a ^{F}chance 
+    \end{verse}
+
+    \begin{chorus}
+        ^{Dm}I've been hoping ^{C/G}for someone like ^{Em/G}you \\
+        Five thousand ^{Am}nights \\
+        ^{Dm}Let me be the ^{C/G}one to love you ^{Em/G}for \\
+        Five thousand ^{Am}more 
+    \end{chorus}
+
+    \begin{verse}
+        ^What in the world was the ^chance \\
+        That not a ^chance, not a ^chance \\
+        ^You cry the song that I ^chanted \\
+        Not a ^chance, not a ^chance 
+    \end{verse}
+
+    \begin{chorus}
+    \end{chorus}
+\end{song}
+
+\begin{song}[remember-chords]{
+    title={Bizarre Love Triangle},
+    music={}
+}
+Capo I
+## Intro
+C
+
+    \begin{verse}
+          ^{F^7}Every time I ^{G}think of you \\
+        I get a ^{Em}shot right through into a ^{Am/E}bolt of blue \\
+        It's no ^{F}problem of mine but it's a ^{G}problem I find \\
+        ^{Em}Living a life that I ^{Am/E}can't leave ^{Amsus2}behind \\
+        ^{F}There's no sense in ^{G}telling me \\
+        The ^{Em}wisdom of a fool won't ^{Am/E}set you free \\
+        But that's the ^{F}way that it goes \\
+        And it's what ^{G}nobody knows \\
+        And ^{Em}every day my ^{Am/E}confusion grows
+    \end{verse}
+
+    \begin{chorus}
+        ^{F}Every time I ^{G}see you falling
+        Em                Am/E   Amsus2
+        I get down on my knees and ^{pray
+          F  (Fsus4)               G
+        I'm waiting for that final moment
+              Em                   Am/E          C
+        You'll  say the words that I can't say
+    \end{chorus}
+ 
+## Verse
+FMaj7             G
+  I feel fine and I feel good
+Em              Am/E
+ I feel like I never should
+         F                              G
+Whenever I get this way, I just don't know what to say
+             Em                        Am/E
+Why can't we be ourselves like we were yesterday
+F                   G
+ I'm not sure what this could mean
+Em                    Am/E
+ I don't think you're what you seem
+        F
+I do admit to myself
+           G
+That if I hurt someone else
+          Em                        Am/E
+Then I'll never see just what we're meant to be
+ 
+## Chorus
+F             G
+Every time I see you falling
+  Em               Am/E
+I get down on my knees and pray
+  F                  G
+I'm waiting for that final moment
+      Em                   Am/E           C
+You'll  say the words that I can't say
+\end{song}
+\end{document}
