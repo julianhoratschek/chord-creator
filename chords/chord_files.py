@@ -173,10 +173,10 @@ def collect(
 
     results: list[ChordFile] = []
 
-    if index_file is not None:
+    if index_file:
         results = __get_by_index_file(index_file, vault_dir, exclude_tags)
 
-    elif search_tags is not None:
+    elif search_tags:
         results = __get_by_tags(search_tags, vault_dir, exclude_tags)
         results.sort(key=lambda f: f.artist)
         results.sort(key=lambda f: f.title)

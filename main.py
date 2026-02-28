@@ -17,7 +17,7 @@ def parse_arguments() -> argparse.Namespace:
 
     file_tags_group.add_argument(
         "-t", "--tags",
-        action = "extend", nargs = "+",
+        action = "extend", nargs = "+", default = [],
         help = "list of tags to search for when selecting songs to print (needs to define --vault-dir)")
 
     file_tags_group.add_argument(
@@ -42,9 +42,9 @@ def parse_arguments() -> argparse.Namespace:
         nargs = 1, default = None, type = Path,
         help = "vault to read all files from (needed in combination with --tags)")
 
-    # Set complex defaults
-
     args = parser.parse_args()
+
+    # Set default output file using index file if set
     if args.output_file is None:
         if args.index_file is not None:
             args.output_file = Path(args.index_file).with_suffix(".latex")
@@ -52,6 +52,7 @@ def parse_arguments() -> argparse.Namespace:
             print("[!!] Either an --output or at least a --file argument must be present")
             exit(0)
 
+    # Set default search dir if not set, using index file if given
     if args.vault_dir is None:
         if args.index_file is not None:
             args.vault_dir = Path(args.index_file.parent)
@@ -69,7 +70,7 @@ if __name__ == "__main__":
         for file in collect(
             vault_dir       = args.vault_dir,
             index_file      = args.index_file,
-            search_tags     = args.tags,
+            search_tags     = set(args.tags),
             exclude_tags    = set(args.exclude_tags))]
 
     if songs:

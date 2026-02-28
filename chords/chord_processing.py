@@ -13,11 +13,12 @@ from .chord_files import ChordFile
 
 NOTES_PATTERN = "[CDEFGAHB][#b]?"
 CHORD_PATTERN= re.compile(
-    f"{NOTES_PATTERN}m?"            +
-    r"(?:maj|Maj|M|^|aug|dim|°)?"   +
-    r"[( ,\-+b#\d)]*"               +
-    r"(?:sus\d+|add\d+)*"           +
-    f"(?:/{NOTES_PATTERN})?")
+    f"{NOTES_PATTERN}m?"                +
+    r"(?:maj|Maj|M|^|aug|dim|°|o|\\o)?" +
+    r"[( ,\-+b#\d)]*"                   +
+    r"(?:sus\d+|add\d+)*"               +
+    f"(?:/{NOTES_PATTERN})?"            +
+    r"\*?")
 
 LEADSHEET_OPTIONS = [
     "align-chords=l",
@@ -52,12 +53,15 @@ def indent_string(s: str, indent: int, indent_char: str = "    ") -> str:
     return (f"\n{tab}").join(s.splitlines())
 
 
-# Module Class Definitions
+# Error Definitions
 
 
 class UnknownChordError(Exception):
     def __init__(self, chord_list: set[str]):
         super().__init__(f"Encountered unknown chords: {', '.join(chord_list)}")
+
+
+# Module Class Definitions
 
 
 class ChordPosition(NamedTuple):
@@ -76,7 +80,6 @@ class TextLine:
 
 @dataclass
 class ChordLine(TextLine):
-    # TODO: process single chord lines
     chords: list[ChordPosition]
 
     @override
@@ -113,15 +116,16 @@ class Song:
         return {section.name for section in self.sections}
 
     def latex(self, indent: int = 0) -> str:
-        sec2lat: Callable[[Section], str] = lambda section: section.latex(indent)
+        sect_list = '\n'.join(
+            [s.latex(indent) for s in self.sections])
 
         return indent_string(
 f"""
-\\begin{{song}}[remember-chords]{{%
+\\begin{{song}}{{%
     title={{{self.title}}},
     music={{{self.artist}}}
 }}
-{'\n'.join(map(sec2lat, self.sections))}
+{sect_list}
 \\end{{song}}
 
 \\pagebreak
@@ -153,12 +157,13 @@ def __get_chords(line: str) -> list[ChordPosition]:
         # Make sure, unknown chords really don't match with out pattern and
         # this isn't just mistaking a text-file for a chord-file by matching
         # parts of words
-        unknown_chords = { chord_pos.chord
-            for chord_pos in result if not CHORD_PATTERN.match(chord_pos.chord)
-        } - set(check)
-
-        if unknown_chords:
-            raise UnknownChordError(unknown_chords)
+        # TODO: any good checker?
+        # unknown_chords = { chord
+        #     for chord in set(check) if CHORD_PATTERN.match(chord)
+        # } - { chord_pos.chord for chord_pos in set(result) }
+        #
+        # if unknown_chords:
+        #     raise UnknownChordError(unknown_chords)
         return []
 
     return result
@@ -209,37 +214,40 @@ def __get_sections(chord_file: ChordFile) -> list[Section]:
     # Pointer to current section lines list
     section_lines = None
 
-    for iline, line in enumerate(chord_file.path
-                                 .read_text()
-                                 .splitlines()):
+    for iline, line in enumerate(chord_file.path.read_text().splitlines()):
         if line.strip() == "":
             continue
 
         # Find "second header" as Section-start
-        if section_title := re.match(r"^##\s+(.+)", line):
-            result.append(
-                Section(section_title[1].rstrip().lower().replace("-", ""),
-                        []))
-            section_lines = result[-1].lines
+        if section_title := re.match(r"^##\s+([\w\-]+)", line):
+            new_section = Section(
+                section_title[1].rstrip().lower().replace("-", ""), [])
+            result.append(new_section)
+            section_lines = new_section.lines
             continue
         
+        # Skip everything up to the first section
         if section_lines is None:
             continue
 
         try:
-            if (chords := __get_chords(line)):
-                append_line = ChordLine(line, chords)
-
-            elif section_lines and isinstance(section_lines[-1], ChordLine):
-                append_line = __merge_lines(line, section_lines.pop())
-
-            else:
-                append_line = TextLine(line)
-
-            section_lines.append(append_line)
+            chords = __get_chords(line)
 
         except UnknownChordError as e:
             print(f"[!!] {e}\n\tIn File {chord_file.path}, line {iline}")
+            chords: list[ChordPosition] = []
+
+        if chords:
+            append_line = ChordLine(line, chords)
+
+        elif (section_lines
+              and isinstance(section_lines[-1], ChordLine)):
+            append_line = __merge_lines(line, section_lines.pop())
+
+        else:
+            append_line = TextLine(line)
+
+        section_lines.append(append_line)
 
     return result
 
@@ -253,7 +261,10 @@ def build_song(chord_file: ChordFile) -> Song:
     :returns: Song-Objekt aus der chord_file
     """
 
-    return Song(chord_file.title, chord_file.artist, __get_sections(chord_file))
+    return Song(
+        chord_file.title,
+        chord_file.artist,
+        __get_sections(chord_file))
 
 
 def write_songs(file_name: Path, songs: list[Song]):
