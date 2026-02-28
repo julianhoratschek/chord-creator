@@ -3,8 +3,7 @@
 import argparse
 from pathlib import Path
 
-import chord_files
-import chord_processing
+from chords import collect, build_song, write_songs
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -66,14 +65,14 @@ def parse_arguments() -> argparse.Namespace:
 if __name__ == "__main__":
     args = parse_arguments()
 
-    songs = [chord_processing.build_song(file)
-        for file in chord_files.collect(
+    songs = [build_song(file)
+        for file in collect(
             vault_dir       = args.vault_dir,
             index_file      = args.index_file,
             search_tags     = args.tags,
             exclude_tags    = set(args.exclude_tags))]
 
     if songs:
-        chord_processing.print_songs(args.output_file, songs)
+        write_songs(args.output_file, songs)
 
 
